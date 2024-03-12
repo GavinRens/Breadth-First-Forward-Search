@@ -14,31 +14,29 @@ list([_| L]) :-
 % and none of the negative goals (FluentsNeg) are in S.
 
 satisfies_goal(State) :-
-    goal_pos(FluentsPos),
+	goal_pos(FluentsPos),
 	goal_neg(FluentsNeg),
-    subset(FluentsPos, State),
-    intersection(FluentsNeg, State, []).
+	subset(FluentsPos, State),
+	intersection(FluentsNeg, State, []).
 	
 	
 % The action is applicable at state S if its positive preconditions (FluentsPos) are in S
 % and none of its negative preconditions (FluentsNeg) are in S.
 
 satisfies_precond(State, Action) :-
-    precond_pos(Action, FluentsPos),
+	precond_pos(Action, FluentsPos),
 	precond_neg(Action, FluentsNeg),
-    subset(FluentsPos, State),
-    intersection(FluentsNeg, State, []).
+	subset(FluentsPos, State),
+	intersection(FluentsNeg, State, []).
 	
 
 % Execute Action in State to move agent to NewState
-% Supplying a Cost for the execution in this context is useful for algos using heuristics
 
-apply( CurState, Action, NewState, Cost) :-
-    deletes(Action, DelList),
-    subtract( CurState, DelList, State), !,
-    adds( Action, AddList),
-    union( AddList, State, NewState),
-	cost( CurState, Action, NewState, Cost).
+apply( CurState, Action, NewState) :-
+	deletes(Action, DelList),
+	subtract( CurState, DelList, State), !,
+	adds( Action, AddList),
+	union( AddList, State, NewState).
 	
 	
 % bffs( StartState, FinalState, Plan)
@@ -56,5 +54,5 @@ plan( State, State, [ ]) :-
 
 plan( State, FinalState, [ Action | RestOfPlan]) :-
 	satisfies_precond(State, Action),
-	apply( State, Action, Successor, _),
+	apply( State, Action, Successor),
 	plan( Successor, FinalState, RestOfPlan). 	
